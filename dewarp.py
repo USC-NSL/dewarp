@@ -40,7 +40,9 @@ disp = Display((800,600))
 vals = []
 last = (0,0)
 # Load the video from the rpi
-vc = VirtualCamera("video.h264","video")
+# vc = VirtualCamera("video.h264","video")
+vc = Camera()
+
 # Sometimes there is crud at the begining, buffer it out
 for i in range(0,10):
     img = vc.getImage()
@@ -63,13 +65,14 @@ Cy = vals[0][1]
 # Inner donut radius
 R1x = vals[1][0]
 R1y = vals[1][1]
-R1 = R1x-Cx
+R1 = np.sqrt((R1x-Cx)*2 + (R1y-Cy)**2)
 # outer donut radius
 R2x = vals[2][0]
 R2y = vals[2][1]
-R2 = R2x-Cx
+R2 = np.sqrt((R2x-Cx)*2 + (R2y-Cy)*2)
+
 # our input and output image siZes
-Wd = 2.0*((R2+R1)/2)*np.pi
+Wd = int(2.0*((R2+R1)/2)*np.pi)
 Hd = (R2-R1)
 Ws = img.width
 Hs = img.height
@@ -97,16 +100,16 @@ i = 0
 while img is not None:
     print img.width,img.height
     result = unwarp(img,xmap,ymap)
-    #derp = result.adaptiveScale(resolution=(640,480))
+    result = result.adaptiveScale(resolution=(640,480))
     #result = result.resize(w=img.width)
     # Once we get an image overlay it on the source
-    derp = img.blit(result,(0,img.height-result.height))
-    derp = derp.applyLayers()
-    #derp = derp.resize(640,480)
-    derp.save(disp)
+    # derp = img.blit(result,(0,img.height-result.height))
+    # derp = derp.applyLayers()
+    # derp = derp.resize(640,480)
+    result.save(disp)
     # Save to file
     fname = "FRAME{num:05d}.png".format(num=i)
-    derp.save(fname)
+    result.save(fname)
     #vs.writeFrame(derp)
     # get the next frame
     img = vc.getImage()
