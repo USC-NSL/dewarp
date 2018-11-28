@@ -73,7 +73,7 @@ R2 = np.sqrt((R2x-Cx)**2 + (R2y-Cy)**2)
 
 # our input and output image siZes
 Wd = int(2.0*((R2+R1)/2)*np.pi)
-Hd = (R2-R1)
+Hd = int(R2-R1)
 Ws = img.width
 Hs = img.height
 # build the pixel map, this could be sped up
