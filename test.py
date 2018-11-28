@@ -4,7 +4,7 @@ import numpy as np
 import time
 from picamera import PiCamera
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # deprecated, checks if point in the sphere is in our output
 def isInROI(x,y,R1,R2,Cx,Cy):
@@ -52,7 +52,6 @@ def click_and_crop(event, x, y, flags, param):
     # (x, y) coordinates and indicate that cropping is being
     # performed
     if event == cv2.EVENT_LBUTTONDOWN:
-        vals = [(x, y)]
         cropping = True
  
     # check to see if the left mouse button was released
@@ -110,8 +109,8 @@ R2 = np.sqrt((R2x-Cx)**2 + (R2y-Cy)**2)
 
 Wd = int(2.0*((R2+R1)/2)*np.pi)
 Hd = int(R2-R1)
-Ws = img.width
-Hs = img.height
+Ws = 1000 # img.width
+Hs = 1000 #img.height
 # build the pixel map, this could be sped up
 print "BUILDING MAP!"
 xmap,ymap = buildMap(Ws,Hs,Wd,Hd,R1,R2,Cx,Cy)
@@ -122,19 +121,20 @@ for i in range(5):
     camera.capture('./image%s.jpg' % i)
     img = cv2.imread('./image%s.jpg' % i)
     result = unwarp(img,xmap,ymap)
-
+    cv2.imwrite('./image%s.jpg' % i, result)
+    """
     screen_res = 1280, 720
     scale_width = screen_res[0] / result.shape[1]
     scale_height = screen_res[1] / result.shape[0]
     scale = min(scale_width, scale_height)
     window_width = int(result.shape[1] * scale)
     window_height = int(result.shape[0] * scale)
-    cv2.imwrite('./image%s.jpg' % i, img)
 
     cv2.namedWindow('dst_rt', cv2.WINDOW_NORMAL)
     cv2.resizeWindow('dst_rt', window_width, window_height)
 
     cv2.imshow('dst_rt', result)
+    """
     # cv2.waitKey(0)
     
 
