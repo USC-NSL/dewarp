@@ -5,12 +5,11 @@ import time
 from picamera import PiCamera
 
 
-inter_choice =
-{
-    1 : CV_INTER_NN,
-    2 : CV_INTER_LINEAR,
-    3 : CV_INTER_CUBIC,
-    4 : CV_INTER_AREA,
+inter_choice ={
+    1 : cv2.INTER_NEAREST,
+    2 : cv2.INTER_LINEAR,
+    3 : cv2.INTER_CUBIC,
+    4 : cv2.INTER_AREA,
 }
 # import matplotlib.pyplot as plt
 
@@ -43,9 +42,9 @@ def buildMap(Ws,Hs,Wd,Hd,R1,R2,Cx,Cy):
 # do the unwarping 
 def unwarp(img,xmap,ymap):
     global inter_choice
-    output = cv2.remap(img,xmap,ymap, inter_choice[1])
+    output = cv2.remap(img,xmap,ymap, inter_choice[2])
     # result = Image(output,cv2image=True)
-    return result
+    return output
 
 
 # disp = Display((800,600))
@@ -75,13 +74,14 @@ def click_and_crop(event, x, y, flags, param):
 # vc = VirtualCamera("video.h264","video")
 camera = PiCamera()
 camera.resolution = (3280, 2464)
-camera.framerate = 15
+#camera.framerate = 30
 
 camera.capture('./image%s.jpg' % i)
 img = cv2.imread('./image%s.jpg' % i)
 
 clone = img.copy()
 cv2.namedWindow("image")
+"""
 cv2.setMouseCallback("image", click_and_crop)
  
 # keep looping until the 'q' key is pressed
@@ -99,7 +99,8 @@ while True:
         break
 
 cv2.destroyAllWindows()
-
+"""
+vals=[(1667,1247), (1924, 1267), (2263,1270)]
 
 
 # 0 = xc yc
@@ -131,7 +132,7 @@ for i in range(5):
     camera.capture('./image%s.jpg' % i)
     img = cv2.imread('./image%s.jpg' % i)
     result = unwarp(img,xmap,ymap)
-    cv2.imwrite('./image%s.jpg' % i, result)
+    cv2.imwrite('./image%s_cropped.jpg' % i, result)
     """
     screen_res = 1280, 720
     scale_width = screen_res[0] / result.shape[1]
