@@ -65,11 +65,11 @@ Cy = vals[0][1]
 # Inner donut radius
 R1x = vals[1][0]
 R1y = vals[1][1]
-R1 = np.sqrt((R1x-Cx)*2 + (R1y-Cy)**2)
+R1 = np.sqrt((R1x-Cx)**2 + (R1y-Cy)**2)
 # outer donut radius
 R2x = vals[2][0]
 R2y = vals[2][1]
-R2 = np.sqrt((R2x-Cx)*2 + (R2y-Cy)*2)
+R2 = np.sqrt((R2x-Cx)**2 + (R2y-Cy)**2)
 
 # our input and output image siZes
 Wd = int(2.0*((R2+R1)/2)*np.pi)
