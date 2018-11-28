@@ -4,6 +4,7 @@ import numpy as np
 import time
 from picamera import PiCamera
 
+import matplotlib.pyplot as plt
 
 # deprecated, checks if point in the sphere is in our output
 def isInROI(x,y,R1,R2,Cx,Cy):
@@ -41,24 +42,60 @@ def unwarp(img,xmap,ymap):
 disp = Display((800,600))
 vals = []
 last = (0,0)
+i = 0
+
+
 # Load the video from the rpi
 # vc = VirtualCamera("video.h264","video")
 camera = PiCamera()
-camera.start_preview()
+
+
+camera.capture('./image%s.jpg' % i)
+img = cv2.imread('./image%s.jpg' % i)
+
+plt.imshow(img)
+# tellme('How many line want to select: ')
+plt.draw()
+
+pts = []
+vals = plt.ginput(3)
+
+
+# 0 = xc yc
+# 1 = r1
+# 2 = r2
+# center of the "donut"    
+Cx = vals[0][0]
+Cy = vals[0][1]
+# Inner donut radius
+R1x = vals[1][0]
+R1y = vals[1][1]
+R1 = np.sqrt((R1x-Cx)**2 + (R1y-Cy)**2)
+# outer donut radius
+R2x = vals[2][0]
+R2y = vals[2][1]
+R2 = np.sqrt((R2x-Cx)**2 + (R2y-Cy)**2)
+Ws = img.width
+Hs = img.height
+# build the pixel map, this could be sped up
+print "BUILDING MAP!"
+xmap,ymap = buildMap(Ws,Hs,Wd,Hd,R1,R2,Cx,Cy)
+print "MAP DONE!"
+
 for i in range(5):
     sleep(5)
     camera.capture('./image%s.jpg' % i)
     img = cv2.imread('./image%s.jpg' % i)
-    screen_res = 1280, 720
-    scale_width = screen_res[0] / img.shape[1]
-    scale_height = screen_res[1] / img.shape[0]
-    scale = min(scale_width, scale_height)
-    window_width = int(img.shape[1] * scale)
-    window_height = int(img.shape[0] * scale)
+    # screen_res = 1280, 720
+    # scale_width = screen_res[0] / img.shape[1]
+    # scale_height = screen_res[1] / img.shape[0]
+    # scale = min(scale_width, scale_height)
+    # window_width = int(img.shape[1] * scale)
+    # window_height = int(img.shape[0] * scale)
 
-    cv2.namedWindow('dst_rt', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('dst_rt', window_width, window_height)
+    # cv2.namedWindow('dst_rt', cv2.WINDOW_NORMAL)
+    # cv2.resizeWindow('dst_rt', window_width, window_height)
 
-    cv2.imshow('dst_rt', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow('dst_rt', img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
