@@ -44,6 +44,24 @@ vals = []
 last = (0,0)
 i = 0
 
+def click_and_crop(event, x, y, flags, param):
+    # grab references to the global variables
+    global vals, cropping
+ 
+    # if the left mouse button was clicked, record the starting
+    # (x, y) coordinates and indicate that cropping is being
+    # performed
+    if event == cv2.EVENT_LBUTTONDOWN:
+        vals = [(x, y)]
+        cropping = True
+ 
+    # check to see if the left mouse button was released
+    elif event == cv2.EVENT_LBUTTONUP:
+        # record the ending (x, y) coordinates and indicate that
+        # the cropping operation is finished
+        vals.append((x, y))
+        cropping = False
+
 
 # Load the video from the rpi
 # vc = VirtualCamera("video.h264","video")
@@ -53,12 +71,25 @@ camera = PiCamera()
 camera.capture('./image%s.jpg' % i)
 img = cv2.imread('./image%s.jpg' % i)
 
-plt.imshow(img)
-# tellme('How many line want to select: ')
-plt.draw()
+clone = img.copy()
+cv2.namedWindow("image")
+cv2.setMouseCallback("image", click_and_crop)
+ 
+# keep looping until the 'q' key is pressed
+while True:
+    # display the image and wait for a keypress
+    cv2.imshow("image", img)
+    key = cv2.waitKey(1) & 0xFF
+ 
+    # if the 'r' key is pressed, reset the cropping region
+    if key == ord("r"):
+        img = clone.copy()
+ 
+    # if the 'c' key is pressed, break from the loop
+    elif key == ord("c"):
+        break
 
-pts = []
-vals = plt.ginput(3)
+
 
 
 # 0 = xc yc
