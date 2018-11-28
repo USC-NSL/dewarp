@@ -74,7 +74,8 @@ def click_and_crop(event, x, y, flags, param):
 # Load the video from the rpi
 # vc = VirtualCamera("video.h264","video")
 camera = PiCamera()
-
+camera.resolution = (3280, 2464)
+camera.framerate = 15
 
 camera.capture('./image%s.jpg' % i)
 img = cv2.imread('./image%s.jpg' % i)
