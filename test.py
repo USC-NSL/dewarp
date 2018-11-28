@@ -89,6 +89,7 @@ while True:
     elif key == ord("c"):
         break
 
+cv2.destroyAllWindows()
 
 
 
@@ -106,6 +107,9 @@ R1 = np.sqrt((R1x-Cx)**2 + (R1y-Cy)**2)
 R2x = vals[2][0]
 R2y = vals[2][1]
 R2 = np.sqrt((R2x-Cx)**2 + (R2y-Cy)**2)
+
+Wd = int(2.0*((R2+R1)/2)*np.pi)
+Hd = int(R2-R1)
 Ws = img.width
 Hs = img.height
 # build the pixel map, this could be sped up
@@ -114,19 +118,24 @@ xmap,ymap = buildMap(Ws,Hs,Wd,Hd,R1,R2,Cx,Cy)
 print "MAP DONE!"
 
 for i in range(5):
-    sleep(5)
+    time.sleep(5)
     camera.capture('./image%s.jpg' % i)
     img = cv2.imread('./image%s.jpg' % i)
-    # screen_res = 1280, 720
-    # scale_width = screen_res[0] / img.shape[1]
-    # scale_height = screen_res[1] / img.shape[0]
-    # scale = min(scale_width, scale_height)
-    # window_width = int(img.shape[1] * scale)
-    # window_height = int(img.shape[0] * scale)
+    result = unwarp(img,xmap,ymap)
 
-    # cv2.namedWindow('dst_rt', cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow('dst_rt', window_width, window_height)
+    screen_res = 1280, 720
+    scale_width = screen_res[0] / result.shape[1]
+    scale_height = screen_res[1] / result.shape[0]
+    scale = min(scale_width, scale_height)
+    window_width = int(result.shape[1] * scale)
+    window_height = int(result.shape[0] * scale)
+    cv2.imwrite('./image%s.jpg' % i, img)
 
-    # cv2.imshow('dst_rt', img)
+    cv2.namedWindow('dst_rt', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('dst_rt', window_width, window_height)
+
+    cv2.imshow('dst_rt', result)
     # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    
+
+cv2.destroyAllWindows()

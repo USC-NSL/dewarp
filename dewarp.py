@@ -31,7 +31,7 @@ def buildMap(Ws,Hs,Wd,Hd,R1,R2,Cx,Cy):
     return map_x, map_y
 # do the unwarping 
 def unwarp(img,xmap,ymap):
-    output = cv2.remap(img.getNumpyCv2(),xmap,ymap,cv2.INTER_LINEAR)
+    output = cv2.remap(img,xmap,ymap,cv2.INTER_LINEAR)
     result = Image(output,cv2image=True)
     return result
 
