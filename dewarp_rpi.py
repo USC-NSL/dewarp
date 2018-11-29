@@ -76,12 +76,24 @@ camera = PiCamera()
 camera.resolution = (3280, 2464)
 #camera.framerate = 30
 
-camera.capture('./image%s.jpg' % i)
-img = cv2.imread('./image%s.jpg' % i)
+camera.capture('./image.jpg')
+img = cv2.imread('./image.jpg')
 
 clone = img.copy()
-cv2.namedWindow("image")
-"""
+# cv2.namedWindow("image")
+screen_res = [1280, 720]
+print img.shape
+scale_width = float(screen_res[0]) / img.shape[1]
+scale_height = float(screen_res[1]) / img.shape[0]
+scale = min(scale_width, scale_height)
+print scale
+window_width = int(img.shape[1] * scale)
+window_height = int(img.shape[0] * scale)
+
+cv2.namedWindow("image", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("image", window_width, window_height)
+
+
 cv2.setMouseCallback("image", click_and_crop)
  
 # keep looping until the 'q' key is pressed
@@ -99,23 +111,25 @@ while True:
         break
 
 cv2.destroyAllWindows()
-"""
-vals=[(1667,1247), (1924, 1267), (2263,1270)]
+time.sleep(2)
+print vals
 
+#vals=[(1667,1247), (1924, 1267), (2263,1270)]
+#scale = 1
 
 # 0 = xc yc
 # 1 = r1
 # 2 = r2
 # center of the "donut"    
-Cx = vals[0][0]
-Cy = vals[0][1]
+Cx = vals[0][0] 
+Cy = vals[0][1] 
 # Inner donut radius
-R1x = vals[1][0]
-R1y = vals[1][1]
+R1x = vals[1][0] 
+R1y = vals[1][1] 
 R1 = np.sqrt((R1x-Cx)**2 + (R1y-Cy)**2)
 # outer donut radius
-R2x = vals[2][0]
-R2y = vals[2][1]
+R2x = vals[2][0] 
+R2y = vals[2][1] 
 R2 = np.sqrt((R2x-Cx)**2 + (R2y-Cy)**2)
 
 Wd = int(2.0*((R2+R1)/2)*np.pi)
@@ -124,6 +138,7 @@ Ws = 1000 # img.width
 Hs = 1000 #img.height
 # build the pixel map, this could be sped up
 print "BUILDING MAP!"
+
 xmap,ymap = buildMap(Ws,Hs,Wd,Hd,R1,R2,Cx,Cy)
 print "MAP DONE!"
 
@@ -133,6 +148,7 @@ for i in range(5):
     img = cv2.imread('./image%s.jpg' % i)
     result = unwarp(img,xmap,ymap)
     cv2.imwrite('./image%s_cropped.jpg' % i, result)
+    print result.shape
     """
     screen_res = 1280, 720
     scale_width = screen_res[0] / result.shape[1]
